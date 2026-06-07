@@ -22,6 +22,10 @@ def verify():
     token = request.args.get("hub.verify_token")
     challenge = request.args.get("hub.challenge")
 
+    print("Mode:", mode)
+    print("Token from Meta:", token)
+    print("Token from Render:", VERIFY_TOKEN)
+
     if mode == "subscribe" and token == VERIFY_TOKEN:
         return challenge, 200
 
