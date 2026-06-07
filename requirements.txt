@@ -1,6 +1,6 @@
 flask
-gradio
+gunicorn
 google-generativeai
 python-dotenv
+gradio
 pandas
-gunicorn
