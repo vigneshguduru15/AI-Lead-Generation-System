@@ -36,6 +36,10 @@ def test():
     print("TEST ROUTE HIT")
     return "OK", 200
 
+@app.route("/vignesh")
+def vignesh():
+    return "VIGNESH_ROUTE_WORKING"
+
 @app.route("/webhook", methods=["POST"])
 def webhook():
 
