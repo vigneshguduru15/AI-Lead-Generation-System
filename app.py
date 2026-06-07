@@ -39,8 +39,7 @@ def webhook():
     print("="*50)
     print(data)
     print("="*50)
-
-    return "EVENT_RECEIVED", 200
+    
 
     try:
         for entry in data["entry"]:
@@ -81,6 +80,7 @@ def webhook():
         print("ERROR:", e)
 
     return "EVENT_RECEIVED", 200
+
 
 def process_lead(
     name,
