@@ -36,8 +36,11 @@ def webhook():
 
     data = request.get_json()
 
-    print("INSTAGRAM EVENT:")
+    print("="*50)
     print(data)
+    print("="*50)
+
+    return "EVENT_RECEIVED", 200
 
     try:
         for entry in data["entry"]:
