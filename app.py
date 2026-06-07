@@ -58,16 +58,6 @@ def verify():
 
     return "Verification failed", 403
 
-@app.route("/webhook", methods=["POST"])
-def webhook():
-
-    print("WEBHOOK POST HIT")
-
-    data = request.get_json()
-
-    print(data)
-
-    return "EVENT_RECEIVED", 200
 
 @app.route("/webhook", methods=["POST"])
 def webhook():
