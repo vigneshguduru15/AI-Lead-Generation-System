@@ -4,6 +4,9 @@ import requests
 import os
 
 app = Flask(__name__)
+@app.route("/")
+def home():
+    return "Instagram Webhook Running Successfully", 200
 
 VERIFY_TOKEN = os.getenv("VERIFY_TOKEN")
 PAGE_ACCESS_TOKEN = os.getenv("PAGE_ACCESS_TOKEN")
