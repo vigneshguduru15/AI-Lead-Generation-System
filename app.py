@@ -31,6 +31,11 @@ def verify():
 
     return "Verification failed", 403
 
+@app.route("/test", methods=["GET"])
+def test():
+    print("TEST ROUTE HIT")
+    return "OK", 200
+
 @app.route("/webhook", methods=["POST"])
 def webhook():
 
