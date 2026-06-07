@@ -40,6 +40,35 @@ def test():
 def vignesh():
     return "VIGNESH_ROUTE_WORKING"
 
+@app.route("/webhook", methods=["GET"])
+def verify():
+
+    print("WEBHOOK GET HIT")
+
+    mode = request.args.get("hub.mode")
+    token = request.args.get("hub.verify_token")
+    challenge = request.args.get("hub.challenge")
+
+    print("Mode:", mode)
+    print("Token from Meta:", token)
+    print("Token from Render:", VERIFY_TOKEN)
+
+    if mode == "subscribe" and token == VERIFY_TOKEN:
+        return challenge, 200
+
+    return "Verification failed", 403
+
+@app.route("/webhook", methods=["POST"])
+def webhook():
+
+    print("WEBHOOK POST HIT")
+
+    data = request.get_json()
+
+    print(data)
+
+    return "EVENT_RECEIVED", 200
+
 @app.route("/webhook", methods=["POST"])
 def webhook():
 
