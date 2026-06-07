@@ -5,8 +5,8 @@ import os
 
 app = Flask(__name__)
 
-VERIFY_TOKEN = os.getenv("vignesh123")
-PAGE_ACCESS_TOKEN = os.getenv("EABAozbMW2UsBRi52OLZAgSPQr7bjZA89DnRBukjBKfXzgdc9z2NdbLr7hVZBSa03SOwLdRBXZBJ3nebo3ZBHXZChkBFnKLVxWFFmHSptM7nhbWkZCNkaR9yP4f8csVnE2PLZBxtBjp7pKLWDttYU9QCiemFPM4ojbSGk7VZCErbUvpE9zlKH3tLqIn0ML7QNL3E5BahETZBoeN7X3JkZCB2vuVusA9603Q5LaEwN9ImPCU0Sz3A")
+VERIFY_TOKEN = os.getenv("VERIFY_TOKEN")
+PAGE_ACCESS_TOKEN = os.getenv("PAGE_ACCESS_TOKEN")
 from lead_classifier import classify_lead
 from auto_reply import generate_reply
 from escalation import should_escalate
@@ -23,6 +23,16 @@ def verify():
         return challenge, 200
 
     return "Verification failed", 403
+
+@app.route("/webhook", methods=["POST"])
+def webhook():
+
+    data = request.get_json()
+
+    print("INSTAGRAM EVENT:")
+    print(data)
+
+    return "EVENT_RECEIVED", 200
 
 def process_lead(
     name,
@@ -147,4 +157,9 @@ Features:
         ]
     )
 
-demo.launch(share=True)
+#demo.launch(share=True)
+if __name__ == "__main__":
+    app.run(
+        host="0.0.0.0",
+        port=int(os.environ.get("PORT", 10000))
+    )
