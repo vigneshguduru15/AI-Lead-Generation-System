@@ -35,6 +35,44 @@ def webhook():
     print("INSTAGRAM EVENT:")
     print(data)
 
+    try:
+        for entry in data["entry"]:
+            for messaging_event in entry["messaging"]:
+
+                sender_id = messaging_event["sender"]["id"]
+
+                if "message" in messaging_event and "text" in messaging_event["message"]:
+
+                    user_message = messaging_event["message"]["text"]
+
+                    lead_type = classify_lead(user_message)
+
+                    ai_reply = generate_reply(
+                        user_message,
+                        lead_type
+                    )
+
+                    url = f"https://graph.facebook.com/v23.0/me/messages?access_token={PAGE_ACCESS_TOKEN}"
+
+                    payload = {
+                        "recipient": {
+                            "id": sender_id
+                        },
+                        "message": {
+                            "text": ai_reply
+                        }
+                    }
+
+                    response = requests.post(
+                        url,
+                        json=payload
+                    )
+
+                    print(response.text)
+
+    except Exception as e:
+        print("ERROR:", e)
+
     return "EVENT_RECEIVED", 200
 
 def process_lead(
