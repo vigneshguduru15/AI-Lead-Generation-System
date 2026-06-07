@@ -1,4 +1,6 @@
+flask
 gradio
 google-generativeai
 python-dotenv
 pandas
+gunicorn
