@@ -1,10 +1,28 @@
 import gradio as gr
+from flask import Flask, request
+import requests
+import os
 
+app = Flask(__name__)
+
+VERIFY_TOKEN = os.getenv("vignesh123")
+PAGE_ACCESS_TOKEN = os.getenv("EABAozbMW2UsBRi52OLZAgSPQr7bjZA89DnRBukjBKfXzgdc9z2NdbLr7hVZBSa03SOwLdRBXZBJ3nebo3ZBHXZChkBFnKLVxWFFmHSptM7nhbWkZCNkaR9yP4f8csVnE2PLZBxtBjp7pKLWDttYU9QCiemFPM4ojbSGk7VZCErbUvpE9zlKH3tLqIn0ML7QNL3E5BahETZBoeN7X3JkZCB2vuVusA9603Q5LaEwN9ImPCU0Sz3A")
 from lead_classifier import classify_lead
 from auto_reply import generate_reply
 from escalation import should_escalate
 from crm import save_lead
 
+@app.route("/webhook", methods=["GET"])
+def verify():
+
+    mode = request.args.get("hub.mode")
+    token = request.args.get("hub.verify_token")
+    challenge = request.args.get("hub.challenge")
+
+    if mode == "subscribe" and token == VERIFY_TOKEN:
+        return challenge, 200
+
+    return "Verification failed", 403
 
 def process_lead(
     name,
