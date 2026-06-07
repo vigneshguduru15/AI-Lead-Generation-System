@@ -35,7 +35,8 @@ def verify():
 def webhook():
 
     data = request.get_json()
-
+    
+    print("WEBHOOK HIT")
     print("="*50)
     print(data)
     print("="*50)
