@@ -15,21 +15,6 @@ from auto_reply import generate_reply
 from escalation import should_escalate
 from crm import save_lead
 
-@app.route("/webhook", methods=["GET"])
-def verify():
-
-    mode = request.args.get("hub.mode")
-    token = request.args.get("hub.verify_token")
-    challenge = request.args.get("hub.challenge")
-
-    print("Mode:", mode)
-    print("Token from Meta:", token)
-    print("Token from Render:", VERIFY_TOKEN)
-
-    if mode == "subscribe" and token == VERIFY_TOKEN:
-        return challenge, 200
-
-    return "Verification failed", 403
 
 @app.route("/test", methods=["GET"])
 def test():
