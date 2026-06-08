@@ -45,6 +45,28 @@ def test_webhook():
 def vignesh():
     return "VIGNESH_ROUTE_WORKING"
 
+# ─────────────────────────────────────────
+# INSTAGRAM REPLY FUNCTION
+# ─────────────────────────────────────────
+
+def send_instagram_reply(recipient_id, message_text):
+    url = f"https://graph.facebook.com/v23.0/me/messages"
+    
+    payload = {
+        "recipient": {"id": recipient_id},
+        "message": {"text": message_text}
+    }
+    
+    params = {"access_token": PAGE_ACCESS_TOKEN}
+    
+    response = requests.post(url, json=payload, params=params)
+    
+    print(f"Instagram reply status: {response.status_code}")
+    print(f"Instagram reply response: {response.text}")
+    
+    return response
+
+
 # ── Webhook Verification (Meta calls this first) ──
 @app.route("/webhook", methods=["GET"])
 def verify():
@@ -112,26 +134,6 @@ def webhook():
         traceback.print_exc()
 
     return "EVENT_RECEIVED", 200
-# ─────────────────────────────────────────
-# INSTAGRAM REPLY FUNCTION
-# ─────────────────────────────────────────
-
-def send_instagram_reply(recipient_id, message_text):
-    url = f"https://graph.facebook.com/v23.0/me/messages"
-    
-    payload = {
-        "recipient": {"id": recipient_id},
-        "message": {"text": message_text}
-    }
-    
-    params = {"access_token": PAGE_ACCESS_TOKEN}
-    
-    response = requests.post(url, json=payload, params=params)
-    
-    print(f"Instagram reply status: {response.status_code}")
-    print(f"Instagram reply response: {response.text}")
-    
-    return response
 
 
 # ─────────────────────────────────────────
