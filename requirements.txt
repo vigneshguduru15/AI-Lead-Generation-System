@@ -1,8 +1,7 @@
 flask
 gunicorn
-google-generativeai
+google-generativeai==0.8.6
 python-dotenv
 gradio
 pandas
 requests
-google-generativeai==0.8.6
