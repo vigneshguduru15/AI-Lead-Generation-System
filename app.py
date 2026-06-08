@@ -69,33 +69,42 @@ def verify():
 def webhook():
     data = request.get_json()
     print("WEBHOOK POST HIT")
+    print("=" * 50)
     print(data)
+    print("=" * 50)
 
     try:
         for entry in data.get("entry", []):
-            # Try both messaging formats
-            messaging_list = entry.get("messaging", [])
-            
-            for event in messaging_list:
-                sender_id = event.get("sender", {}).get("id")
-                msg = event.get("message", {})
-                user_message = msg.get("text", "")
+
+            # Instagram sends via changes[], not messaging[]
+            for change in entry.get("changes", []):
+                value = change.get("value", {})
+                
+                sender_id = value.get("sender", {}).get("id")
+                message_obj = value.get("message", {})
+                user_message = message_obj.get("text", "")
 
                 print(f"Sender: {sender_id}")
                 print(f"Message: {user_message}")
 
                 if not user_message or not sender_id:
+                    print("No message or sender, skipping")
                     continue
 
                 lead_type = classify_lead(user_message)
+                print(f"Lead type: {lead_type}")
+
                 ai_reply = generate_reply(user_message, lead_type)
-                
-                save_lead(sender_id, "Instagram", 
-                         sender_id, user_message, 
-                         lead_type, ai_reply)
-                
+                print(f"AI reply: {ai_reply}")
+
+                save_lead(
+                    sender_id, "Instagram",
+                    sender_id, user_message,
+                    lead_type, ai_reply
+                )
+
                 send_instagram_reply(sender_id, ai_reply)
-                print(f"Reply sent: {ai_reply}")
+                print("Reply sent successfully!")
 
     except Exception as e:
         print(f"ERROR: {e}")
@@ -103,7 +112,6 @@ def webhook():
         traceback.print_exc()
 
     return "EVENT_RECEIVED", 200
-
 # ─────────────────────────────────────────
 # INSTAGRAM REPLY FUNCTION
 # ─────────────────────────────────────────
