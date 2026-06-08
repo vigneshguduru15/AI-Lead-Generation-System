@@ -33,6 +33,17 @@ def home():
 def test():
     return "OK", 200
 
+@app.route("/test-webhook", methods=["POST"])
+def test_webhook():
+    data = request.get_json()
+    print("TEST WEBHOOK DATA:")
+    print(data)
+    return "OK", 200
+
+
+@app.route("/vignesh")
+def vignesh():
+    return "VIGNESH_ROUTE_WORKING"
 
 # ── Webhook Verification (Meta calls this first) ──
 @app.route("/webhook", methods=["GET"])
@@ -57,60 +68,41 @@ def verify():
 @app.route("/webhook", methods=["POST"])
 def webhook():
     data = request.get_json()
-
     print("WEBHOOK POST HIT")
-    print("=" * 50)
     print(data)
-    print("=" * 50)
 
     try:
-        entries = data.get("entry", [])
-
-        for entry in entries:
-            # Instagram DMs come under "messaging"
-            messaging_events = entry.get("messaging", [])
-
-            for messaging_event in messaging_events:
-                sender_id = messaging_event["sender"]["id"]
-                print(f"Message from sender: {sender_id}")
-
-                # Only process text messages
-                msg = messaging_event.get("message", {})
+        for entry in data.get("entry", []):
+            # Try both messaging formats
+            messaging_list = entry.get("messaging", [])
+            
+            for event in messaging_list:
+                sender_id = event.get("sender", {}).get("id")
+                msg = event.get("message", {})
                 user_message = msg.get("text", "")
 
-                if not user_message:
-                    print("No text in message, skipping")
+                print(f"Sender: {sender_id}")
+                print(f"Message: {user_message}")
+
+                if not user_message or not sender_id:
                     continue
 
-                print(f"User message: {user_message}")
-
-                # Step 1 — Classify lead
                 lead_type = classify_lead(user_message)
-                print(f"Lead type: {lead_type}")
-
-                # Step 2 — Generate AI reply
                 ai_reply = generate_reply(user_message, lead_type)
-                print(f"AI reply: {ai_reply}")
-
-                # Step 3 — Save to CRM
-                save_lead(
-                    name=sender_id,
-                    platform="Instagram",
-                    contact=sender_id,
-                    message=user_message,
-                    lead_type=lead_type,
-                    ai_reply=ai_reply
-                )
-
-                # Step 4 — Send reply back on Instagram
+                
+                save_lead(sender_id, "Instagram", 
+                         sender_id, user_message, 
+                         lead_type, ai_reply)
+                
                 send_instagram_reply(sender_id, ai_reply)
+                print(f"Reply sent: {ai_reply}")
 
     except Exception as e:
-        print(f"ERROR processing webhook: {e}")
+        print(f"ERROR: {e}")
+        import traceback
+        traceback.print_exc()
 
-    # Always return 200 to Meta — otherwise Meta will retry
     return "EVENT_RECEIVED", 200
-
 
 # ─────────────────────────────────────────
 # INSTAGRAM REPLY FUNCTION
